@@ -1,5 +1,5 @@
 package io.github.CraftedRNL;
-
+//IMRPOTTTTT
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -17,36 +17,40 @@ public class ShopScreen implements Screen {
     private Texture shopBackground;
     private SpriteBatch batch;
     private FitViewport viewport;
-
+//  UI components
     private Stage stage;
     private Skin skin;
+    // Upgrade prices
     private float gearPrice;
     private final int plasticPrice = 50;
     private final int ironPrice = 500;
     private final int goldPrice = 2500;
     private final int osmiumPrice = 10000;
+    //player states
     private int currentEPoints;
     private int gearCount;
+    //the buttons for UI
     TextButton woodButton;
     TextButton plasticButton;
     TextButton ironButton;
     TextButton goldButton;
     TextButton osmiumButton;
     TextButton buyGearButton;
-
+    //Mat states
     private boolean plasticBought = false;
     private boolean ironBought = false;
     private boolean goldBought = false;
     private boolean osmiumBought = false;
-
+    //current material
     private Material material;
-
+    //constructor
     public ShopScreen(Main game){
         this.game = game;
+        // loads player progress
         this.gearCount = game.getGearCount();
         this.currentEPoints = game.getEPoints();
         this.gearPrice = calculateGearPrice();
-
+    //load unlocked mats
         this.plasticBought = game.isPlasticBought();
         this.ironBought = game.isIronBought();
         this.goldBought = game.isGoldBought();
@@ -54,9 +58,11 @@ public class ShopScreen implements Screen {
         this.material = game.getMaterial();
         System.out.println(gearPrice);
     }
+    //calculate gear price based on gear count
     private float calculateGearPrice() {
         return (game.getGearCount() * 10f)+10f;
     }
+    //update button text if already purchased
     private void updateButtonStates(){
         if (plasticBought) {
             plasticButton.setText("Plastic (Owned)");
@@ -82,43 +88,46 @@ public class ShopScreen implements Screen {
             osmiumButton.setText("Osmium (" + osmiumPrice + " E-Points)");
         }
     }
+    //purchase gear if enough points
     public void addGear(){
         if(currentEPoints >= gearPrice){
-
+            //deduct points and increase count
             currentEPoints -= (int)gearPrice;
             game.setEPoints(currentEPoints);
 
             System.out.println("G" +gearPrice);
 
             gearCount++;
+            //price goes higher
             game.setGearCount(gearCount);;
             System.out.println(gearCount);
             gearPrice = calculateGearPrice();
-
+            //update button text
             buyGearButton.setText("Buy Gear. Price:" + gearPrice);
 
         }
     }
     @Override
     public void show() {
+        //sets the GUI up
         gearPrice = calculateGearPrice();
         batch = new SpriteBatch();
         viewport = new FitViewport(1920, 1080);
+        //something IDK, used a tutorial
         stage = new Stage(viewport);
         Gdx.input.setInputProcessor(stage);
-
         skin = new Skin(Gdx.files.internal("skin/clean-crispy-ui.json"));
-
-
-        shopBackground = new Texture(Gdx.files.internal("shop.jpg"));
-
-
         Table table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
+    //background
+        shopBackground = new Texture(Gdx.files.internal("shop.jpg"));
 
 
 
+
+
+//buttons
          buyGearButton = new TextButton("Buy Gear. Price:" + gearPrice, skin);
          woodButton = new TextButton("Wood", skin);
          plasticButton = new TextButton("Plastic (" + plasticPrice + " E-Points)", skin);
@@ -127,7 +136,7 @@ public class ShopScreen implements Screen {
          osmiumButton = new TextButton("Osmium (" + osmiumPrice + " E-Points)", skin);
         TextButton backButton = new TextButton("Back to Game", skin);
 
-
+//button event listeners, when click do somthing
         backButton.addListener(event -> {
             if(Gdx.input.justTouched()){
                 game.setMaterial(material);
@@ -213,7 +222,7 @@ public class ShopScreen implements Screen {
             return true;
         });
 
-
+//    adds buttons to the table
         table.add(buyGearButton).width(300).height(50).padBottom(20).row();
         table.add(woodButton).width(300).height(50).padBottom(20).row();
         table.add(plasticButton).width(300).height(50).padBottom(20).row();
@@ -226,9 +235,11 @@ public class ShopScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        //alternative purchase method
         if(Gdx.input.isKeyJustPressed(Input.Keys.G)){
             addGear();
         }
+        //render background and table
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.setProjectionMatrix(viewport.getCamera().combined);
